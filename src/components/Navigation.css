@@ -1,0 +1,14 @@
+body {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+* {
+  box-sizing: inherit;
+}
+
+.nav {
+  background-color: #0077ff;
+  margin:0;
+  padding:0;
+}
