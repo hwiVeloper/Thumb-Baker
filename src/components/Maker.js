@@ -14,6 +14,8 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { withStyles } from '@material-ui/core';
 
+import html2canvas from 'html2canvas';
+
 const styles = theme => ({
   layout: {
     width: 'auto',
@@ -76,6 +78,8 @@ class Maker extends Component {
     this.handleThumbHeightChange = this.handleThumbHeightChange.bind(this);
     this.handleTextChange = this.handleTextChange.bind(this);
     this.handleTextSizeChange = this.handleTextSizeChange.bind(this);
+    this.handleClickDownload = this.handleClickDownload.bind(this);
+    this.downloadURI = this.downloadURI.bind(this);
   }
 
   handleImageChange(e) {
@@ -123,6 +127,26 @@ class Maker extends Component {
     this.setState({
       textSize: e.target.value,
     })
+  }
+
+  handleClickDownload(e) {
+    e.preventDefault();
+
+    const preview = document.getElementById('preview');
+    html2canvas(preview).then((canvas) => {
+      this.downloadURI(canvas.toDataURL(), 'thumb-baker.png');
+    });
+  }
+
+  downloadURI(canvas, name) {
+    const link = document.createElement('a');
+    link.download = name;
+    link.href = canvas;
+    document.body.appendChild(link);
+    link.click();
+    // after creating link you should delete dynamic link
+    // clearDynamicLink(link);
+    link.remove();
   }
 
   render() {
@@ -179,14 +203,6 @@ class Maker extends Component {
                 </Grid>
                 <Grid container spacing={24}>
                   <Grid item xs={12}>
-                    {/* <TextField
-                      id="textValue"
-                      label="Text"
-                      className={classes.textField}
-                      value={text}
-                      onChange={this.handleTextChange}
-                      margin="normal"
-                    /> */}
                     <TextField
                       id="textValue"
                       label="Text"
@@ -245,14 +261,16 @@ class Maker extends Component {
             </Grid>
             <Grid item xs={12}>
               <Paper className={classes.paper}>
-                <div style={{
-                  width: this.state.thumbWidth,
-                  height: this.state.thumbHeight,
-                  border: '1px solid #000',
-                  backgroundImage: `url(${imagePreviewUrl})`,
-                  backgroundSize: 'cover',
-                  position: 'relative',
-                }}
+                <div
+                  id="preview"
+                  style={{
+                    width: this.state.thumbWidth,
+                    height: this.state.thumbHeight,
+                    border: '1px solid #000',
+                    backgroundImage: `url(${imagePreviewUrl})`,
+                    backgroundSize: 'cover',
+                    position: 'relative',
+                  }}
                 >
                   <div>
                     <span className={textPosition} style={textStyle}>
@@ -270,7 +288,7 @@ class Maker extends Component {
             </Grid>
           </Grid>
         </main>
-        <Fab variant="extended" aria-label="Delete" className={classes.fab}>
+        <Fab variant="extended" aria-label="Delete" className={classes.fab} onClick={this.handleClickDownload}>
           Download!
         </Fab>
       </>
