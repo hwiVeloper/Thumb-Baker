@@ -1,12 +1,7 @@
 .container {
   position: relative;
   text-align: center;
-  color: white;
-}
-
-.preview-area {
-  background: url();
-  width:100%;
+  color: #000;
 }
 
 .text-bottom-left {

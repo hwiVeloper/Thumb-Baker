@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 const styles = {
   root: {
@@ -15,15 +16,18 @@ function Navigation(props) {
   const { classes } = props;
 
   return (
-    <div className={classes.root}>
-      <AppBar position="static" color="primary">
-        <Toolbar>
-          <Typography variant="h6" color="inherit">
-            Thumb Baker
-          </Typography>
-        </Toolbar>
-      </AppBar>
-    </div>
+    <>
+      <CssBaseline />
+      <div className={classes.root}>
+        <AppBar position="static" color="primary">
+          <Toolbar>
+            <Typography variant="h6" color="inherit">
+              Thumb Baker
+            </Typography>
+          </Toolbar>
+        </AppBar>
+      </div>
+    </>
   );
 }
 
