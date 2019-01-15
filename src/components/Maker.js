@@ -14,6 +14,8 @@ import {
   FormControlLabel,
   FormLabel,
   withStyles,
+  Typography,
+  Checkbox,
 } from '@material-ui/core';
 import ColorPicker from 'material-ui-color-picker'
 
@@ -74,6 +76,7 @@ class Maker extends Component {
       text: 'Sample Text',
       textColor: '#000000',
       textSize: 14,
+      border: true,
     }
 
     // event method bind
@@ -90,7 +93,6 @@ class Maker extends Component {
 
   handleImageChange(e) {
     e.preventDefault();
-    console.log(this.state.backgroundType);
     if (this.state.backgroundType === 'image') {
       const reader = new FileReader();
       const file = e.target.files[0];
@@ -104,7 +106,6 @@ class Maker extends Component {
       reader.readAsDataURL(file);
     } else
     if (this.state.backgroundType === 'url') {
-      console.log(111);
       this.setState({
         imagePreviewUrl: e.target.value,
       })
@@ -132,6 +133,8 @@ class Maker extends Component {
   }
 
   handleTextChange(e) {
+    // let val = e.target.value;
+    // val = val.split('\\n').join('\\n');
     this.setState({
       text: e.target.value,
     })
@@ -148,14 +151,15 @@ class Maker extends Component {
 
     const preview = document.getElementById('preview');
     html2canvas(preview).then((canvas) => {
-      this.downloadURI(canvas.toDataURL(), 'thumb-baker.png');
+      this.downloadURI(canvas.toDataURL('image/png'), 'thumb-baker.png');
     });
   }
 
-  downloadURI(canvas, name) {
+  downloadURI(img, name) {
     const link = document.createElement('a');
     link.download = name;
-    link.href = canvas;
+    link.href = img;
+    link.target = '_self';
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -180,6 +184,7 @@ class Maker extends Component {
     const textStyle = {
       color: this.state.textColor,
       fontSize: `${this.state.textSize}px`,
+      display: 'table-cell',
       margin: 0,
     };
 
@@ -207,8 +212,8 @@ class Maker extends Component {
         backgroundComp = (
           <TextField
             id="standard-with-placeholder"
-            label="With placeholder"
-            placeholder="Placeholder"
+            label="URL"
+            placeholder="ex) https://github.com/hwiveloper.png"
             className={classes.textField}
             onChange={this.handleImageChange}
             margin="none"
@@ -253,7 +258,7 @@ class Maker extends Component {
                   </Grid>
                 </Grid>
                 <Grid container spacing={24}>
-                  <Grid item xs={12}>
+                  <Grid item xs={6}>
                     <FormLabel component="legend">Background Type</FormLabel>
                     <FormControlLabel
                       control={(
@@ -290,6 +295,21 @@ class Maker extends Component {
                         />
                       )}
                       label="URL"
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <FormLabel component="legend">Border</FormLabel>
+                    <FormControlLabel
+                      control={(
+                        <Checkbox
+                          checked={this.state.border}
+                          onChange={(checked) => {
+                            console.log(checked.target.checked);
+                            this.setState({ border: checked.target.checked })
+                          }}
+                        />
+                      )}
+                      label={this.state.border ? 'Use Border(1px solid black)' : 'Not Use Border'}
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -338,6 +358,7 @@ class Maker extends Component {
                       value={this.state.textColor}
                       onChange={color => this.setState({ textColor: color })}
                       label="Font Color"
+                      style={{ color: '#000000' }}
                     />
                   </Grid>
                   <Grid item xs={6}>
@@ -360,18 +381,19 @@ class Maker extends Component {
                   style={{
                     width: this.state.thumbWidth,
                     height: this.state.thumbHeight,
-                    border: '1px solid #000',
+                    border: this.state.border ? '1px solid #000' : 'none',
                     backgroundImage: `url(${imagePreviewUrl})`,
                     backgroundColor: this.state.previewBackgroundColor,
                     backgroundSize: 'cover',
                     position: 'relative',
-                    textAlign: 'center',
-                    verticalAlign: 'middle',
+                    padding: 5,
+                    display: 'table',
                   }}
                 >
-                  <p className={textPosition} style={textStyle}>
-                    {text}
-                  </p>
+                  <Typography className={textPosition} style={textStyle}>
+                    {/* {text} */}
+                    {text.split('\n').map(line => (<span>{line}<br /></span>))}
+                  </Typography>
                 </div>
               </Paper>
             </Grid>

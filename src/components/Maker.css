@@ -8,31 +8,36 @@
   position: absolute;
   bottom: 8px;
   left: 16px;
+  text-align: left;
 }
 
 .text-top-left {
   position: absolute;
   top: 8px;
   left: 16px;
+  text-align: left;
 }
 
 .text-top-right {
   position: absolute;
   top: 8px;
   right: 16px;
+  text-align: right;
 }
 
 .text-bottom-right {
   position: absolute;
   bottom: 8px;
   right: 16px;
+  text-align: right;
 }
 
 .text-centered {
-  position: absolute;
-  text-align: center;
+  /* top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); */
+  display: table-cell;
+  margin: auto;
   vertical-align: middle;
-  /* transform: translate(-50%, -50%); */
-  padding: 0;
-  margin: 0;
+  text-align: center;
 }
