@@ -1,18 +1,21 @@
 import React, { Component } from 'react';
 import './Maker.css';
 
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
-import InputLabel from '@material-ui/core/InputLabel';
-import TextField from '@material-ui/core/TextField';
+import {
+  Paper,
+  Grid,
+  InputLabel,
+  TextField,
+  Radio,
+  Fab,
+  Select,
+  MenuItem,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  withStyles,
+} from '@material-ui/core';
 import ColorPicker from 'material-ui-color-picker'
-import Fab from '@material-ui/core/Fab';
-
-import Button from '@material-ui/core/Button';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import { withStyles } from '@material-ui/core';
 
 import html2canvas from 'html2canvas';
 
@@ -63,9 +66,11 @@ class Maker extends Component {
     super(props);
     this.state = {
       imagePreviewUrl: '',
+      previewBackgroundColor: '',
       textPosition: 'text-centered',
-      thumbWidth: 500,
-      thumbHeight: 500,
+      thumbWidth: 250,
+      thumbHeight: 250,
+      backgroundType: 'image',
       text: 'Sample Text',
       textColor: '#000000',
       textSize: 14,
@@ -80,21 +85,30 @@ class Maker extends Component {
     this.handleTextSizeChange = this.handleTextSizeChange.bind(this);
     this.handleClickDownload = this.handleClickDownload.bind(this);
     this.downloadURI = this.downloadURI.bind(this);
+    this.handleBackgroundTypeChange = this.handleBackgroundTypeChange.bind(this);
   }
 
   handleImageChange(e) {
     e.preventDefault();
+    console.log(this.state.backgroundType);
+    if (this.state.backgroundType === 'image') {
+      const reader = new FileReader();
+      const file = e.target.files[0];
 
-    const reader = new FileReader();
-    const file = e.target.files[0];
+      reader.onloadend = () => {
+        this.setState({
+          imagePreviewUrl: reader.result,
+        });
+      }
 
-    reader.onloadend = () => {
+      reader.readAsDataURL(file);
+    } else
+    if (this.state.backgroundType === 'url') {
+      console.log(111);
       this.setState({
-        imagePreviewUrl: reader.result,
-      });
+        imagePreviewUrl: e.target.value,
+      })
     }
-
-    reader.readAsDataURL(file);
   }
 
   handleTextPositionChange(e) {
@@ -144,9 +158,15 @@ class Maker extends Component {
     link.href = canvas;
     document.body.appendChild(link);
     link.click();
-    // after creating link you should delete dynamic link
-    // clearDynamicLink(link);
     link.remove();
+  }
+
+  handleBackgroundTypeChange(e) {
+    this.setState({
+      backgroundType: e.target.value,
+      previewBackgroundColor: '#ffffff',
+      imagePreviewUrl: '',
+    });
   }
 
   render() {
@@ -154,14 +174,50 @@ class Maker extends Component {
       imagePreviewUrl,
       textPosition,
       text,
+      backgroundType,
     } = this.state;
 
     const textStyle = {
       color: this.state.textColor,
       fontSize: `${this.state.textSize}px`,
+      margin: 0,
     };
 
     const { classes } = this.props;
+
+    let backgroundComp;
+    switch (backgroundType) {
+      case 'image':
+        backgroundComp = (
+          <input id="upload" type="file" accept="image/*" onChange={this.handleImageChange} />
+        );
+        break;
+      case 'color':
+        backgroundComp = (
+          <ColorPicker
+            name="backgroundColor"
+            defaultValue="#000000"
+            value={this.state.previewBackgroundColor}
+            onChange={color => this.setState({ previewBackgroundColor: color })}
+            label="Background Color"
+          />
+        );
+        break;
+      case 'url':
+        backgroundComp = (
+          <TextField
+            id="standard-with-placeholder"
+            label="With placeholder"
+            placeholder="Placeholder"
+            className={classes.textField}
+            onChange={this.handleImageChange}
+            margin="none"
+          />
+        );
+        break;
+      default:
+        backgroundComp = null;
+    }
 
     return (
       <>
@@ -174,7 +230,7 @@ class Maker extends Component {
                   <Grid item xs={6}>
                     <TextField
                       id="thumbWidth"
-                      label="Width"
+                      label="Width (max: 500)"
                       className={classes.textField}
                       value={this.state.thumbWidth}
                       onChange={this.handleThumbWidthChange}
@@ -186,7 +242,7 @@ class Maker extends Component {
                   <Grid item xs={6}>
                     <TextField
                       id="thumbHeight"
-                      label="Height"
+                      label="Height (max: 500)"
                       className={classes.textField}
                       value={this.state.thumbHeight}
                       onChange={this.handleThumbHeightChange}
@@ -198,7 +254,46 @@ class Maker extends Component {
                 </Grid>
                 <Grid container spacing={24}>
                   <Grid item xs={12}>
-                    <input id="upload" type="file" accept="image/*" onChange={this.handleImageChange} />
+                    <FormLabel component="legend">Background Type</FormLabel>
+                    <FormControlLabel
+                      control={(
+                        <Radio
+                          checked={this.state.backgroundType === 'image'}
+                          onChange={this.handleBackgroundTypeChange}
+                          value="image"
+                          name="backgroundType"
+                          color="primary"
+                        />
+                      )}
+                      label="Image"
+                    />
+                    <FormControlLabel
+                      control={(
+                        <Radio
+                          checked={this.state.backgroundType === 'color'}
+                          onChange={this.handleBackgroundTypeChange}
+                          value="color"
+                          name="backgroundType"
+                          color="primary"
+                        />
+                      )}
+                      label="Color"
+                    />
+                    <FormControlLabel
+                      control={(
+                        <Radio
+                          checked={this.state.backgroundType === 'url'}
+                          onChange={this.handleBackgroundTypeChange}
+                          value="url"
+                          name="backgroundType"
+                          color="primary"
+                        />
+                      )}
+                      label="URL"
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    {backgroundComp}
                   </Grid>
                 </Grid>
                 <Grid container spacing={24}>
@@ -258,9 +353,8 @@ class Maker extends Component {
                   </Grid>
                 </Grid>
               </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
+              {/* Thumb Preview */}
+              <Paper className={classes.paper} align="center">
                 <div
                   id="preview"
                   style={{
@@ -268,28 +362,24 @@ class Maker extends Component {
                     height: this.state.thumbHeight,
                     border: '1px solid #000',
                     backgroundImage: `url(${imagePreviewUrl})`,
+                    backgroundColor: this.state.previewBackgroundColor,
                     backgroundSize: 'cover',
                     position: 'relative',
+                    textAlign: 'center',
+                    verticalAlign: 'middle',
                   }}
                 >
-                  <div>
-                    <span className={textPosition} style={textStyle}>
-                      {text}
-                    </span>
-
-                  </div>
-                </div>
-                <div className="export-area">
-                  <Button variant="contained" color="primary">
-                    Download Image
-                  </Button>
+                  <p className={textPosition} style={textStyle}>
+                    {text}
+                  </p>
                 </div>
               </Paper>
             </Grid>
+            <Grid item xs={12} />
           </Grid>
         </main>
         <Fab variant="extended" aria-label="Delete" className={classes.fab} onClick={this.handleClickDownload}>
-          Download!
+          Download Preview
         </Fab>
       </>
     )
