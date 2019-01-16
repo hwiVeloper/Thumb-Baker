@@ -284,6 +284,7 @@ class Maker extends Component {
                       )}
                       label="Color"
                     />
+                    {/*
                     <FormControlLabel
                       control={(
                         <Radio
@@ -296,6 +297,7 @@ class Maker extends Component {
                       )}
                       label="URL"
                     />
+                    */}
                   </Grid>
                   <Grid item xs={6}>
                     <FormLabel component="legend">Border</FormLabel>
@@ -304,7 +306,6 @@ class Maker extends Component {
                         <Checkbox
                           checked={this.state.border}
                           onChange={(checked) => {
-                            console.log(checked.target.checked);
                             this.setState({ border: checked.target.checked })
                           }}
                         />
