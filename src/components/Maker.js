@@ -122,7 +122,7 @@ class Maker extends Component {
 
   handleThumbWidthChange(e) {
     this.setState({
-      thumbWidth: (Number(e.target.value) > 500 ? 500 : Number(e.target.value)),
+      thumbWidth: (Number(e.target.value.replace(/^0+/, '')) > 500 ? 500 : Number(e.target.value.replace(/^0+/, ''))),
     });
   }
 
