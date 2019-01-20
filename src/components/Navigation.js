@@ -1,10 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import { AppBar, Toolbar, Typography, CssBaseline } from '@material-ui/core';
 
 const styles = {
   root: {
@@ -12,10 +9,7 @@ const styles = {
   },
 };
 
-function Navigation(props) {
-  const { classes } = props;
-
-  return (
+const Navigation = memo(({ classes }) => (
     <>
       <CssBaseline />
       <div className={classes.root}>
@@ -28,8 +22,7 @@ function Navigation(props) {
         </AppBar>
       </div>
     </>
-  );
-}
+))
 
 Navigation.propTypes = {
   classes: PropTypes.object.isRequired,
